@@ -1,21 +1,21 @@
 from flask import request, render_template, url_for, flash, redirect, Blueprint
-from flaskblog import *
-from forms import *
-from flaskblog.models import *
+from flaskblog import db
+from forms import PostForm
+from models import Post
 from flask_login import current_user, login_required
 
 posts = Blueprint('posts', __name__)
 
 
 #routes for posts
-@app.route("/post/<int:post_id>")
+@posts.route("/post/<int:post_id>")
 @login_required
 def post(post_id):
     post = Post.query.get_or_404(post_id)
     return render_template('post.html', title=post.title, post=post)
 
 
-@app.route("/post/new", method=["GET", "POST"])
+@posts.route("/post/new", method=["GET", "POST"])
 @login_required
 def new_post():
     form = PostForm()
@@ -28,7 +28,7 @@ def new_post():
     return render_template('new_post.html', title="New Post", form=form)
 
 
-@app.route("/post/<int:post_id>/edit", method=["GET", "POST"])
+@posts.route("/post/<int:post_id>/edit", method=["GET", "POST"])
 @login_required
 def edit_post(post_id):
     post = Post.query.get_or_404(post_id)
@@ -45,7 +45,7 @@ def edit_post(post_id):
     return render_template('new_post.html', title="Edit Post", form=form)
 
 
-@app.route("/post/<int: post_id>/delete", method=["GET", "POST"])
+@posts.route("/post/<int: post_id>/delete", method=["GET", "POST"])
 @login_required
 def delete_post(post_id):
     post = Post.query.get_or_404(post_id)

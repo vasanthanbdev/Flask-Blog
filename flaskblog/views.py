@@ -9,13 +9,8 @@ from flask_login import current_user, login_user, logout_user, login_required, l
 @app.route("/home")
 @login_required
 def home():
-    posts = Post.query.order_by(Post.date_posted.desc())    
+    posts = Post.query.all()    
     return render_template('home.html', posts=posts)
-
-
-@app.route("/about")
-def about():
-    return render_template('about.html', title='About')
 
 
 # routes for user management
@@ -71,7 +66,7 @@ def account():
 @app.route("/profile/<string:username>")
 def profile(username):
     user = User.query.filter_by(username=username).first_or_404()
-    posts = Post.query.filter_by(author=user).order_by(Post.date_posted.desc())
+    posts = Post.query.filter_by(author=user).all()
     return render_template('profile.html',title='Profile', posts=posts, user=user)
 
 

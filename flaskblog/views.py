@@ -1,4 +1,4 @@
-from flask import request, render_template, redirect, url_for, flash
+from flask import request, render_template, redirect, url_for
 from flaskblog import app, db
 from flaskblog.models import User, Post
 from flaskblog.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm
@@ -28,7 +28,6 @@ def register():
         user = User(username=form.username.data, email=form.email.data, password=form.password.data)
         db.session.add(user)
         db.session.commit()
-        flash(f'Your acccount has been created you can now login', 'success')
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
 
@@ -42,11 +41,8 @@ def login():
         user = User.query.filter_by(email=form.email.data).first()
         if user:
             login_user(user)
-            flash('You have been logged in!', 'success')
             next_page = request.args.get('next')
-            return redirect(next_page) if next_page else redirect(url_for('main.home'))
-        else:
-            flash('Login Unsuccessful. Please check username and password', 'danger')
+            return redirect(next_page) if next_page else redirect(url_for('home'))
     return render_template('login.html', title='Login', form=form)
 
 
@@ -65,7 +61,6 @@ def account():
         current_user.username = form.username.data
         current_user.email = form.email.data
         db.session.commit()
-        flash('Your account has been updated!', 'success')
         return redirect(url_for('account'))
     elif request.method == 'GET':
         form.username.data = current_user.username
@@ -77,7 +72,7 @@ def account():
 def profile(username):
     user = User.query.filter_by(username=username).first_or_404()
     posts = Post.query.filter_by(author=user).order_by(Post.date_posted.desc())
-    return render_template('user_posts.html',title='Profile', posts=posts, user=user)
+    return render_template('profile.html',title='Profile', posts=posts, user=user)
 
 
 
@@ -90,7 +85,6 @@ def create_post():
         post = Post(title=form.title.data, content=form.content.data, author=current_user)
         db.session.add(post)
         db.session.commit()
-        flash('Your Post has been successfully created!', 'sucess')
         return redirect(url_for('home'))
     return render_template('create_post.html', title="New Post", form=form)
 
@@ -111,7 +105,6 @@ def edit_post(post_id):
         post.title = form.title.data
         post.content = form.content.data
         db.session.commit()
-        flash('Your Post has been successfully edited!', 'sucess')
         return redirect(url_for('post', post_id=post.id))
     elif request.method == "GET":
         form.title.data = post.title
@@ -125,7 +118,6 @@ def delete_post(post_id):
     post = Post.query.get_or_404(post_id)
     db.session.delete(post)
     db.session.commit()
-    flash('Your Post has been successfully deleted!', 'sucess')
     return redirect(url_for('home'))
 
 

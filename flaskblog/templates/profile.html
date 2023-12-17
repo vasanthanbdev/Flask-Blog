@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block content %}
+    <h1 class="mb-3">Posts by {{ user.username }}</h1>
+	<br/>
+    {% for post in posts.items %}
+        <div class="card">
+            <div class="card-header">
+            	<a class="mr-2" href="{{ url_for('profile', username=post.author.username) }}">{{ post.author.username }}</a>
+            	<small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
+            </div>
+			<div class="card-body">
+            	<h2><a class="div-title" href="{{ url_for('post', post_id=post.id) }}">{{ post.title }}</a></h2>
+            	<p class="div-content">{{ post.content }}</p>
+          	</div>
+        </div>
+    {% endfor %}
+{% endblock content %}
